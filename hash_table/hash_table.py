@@ -8,6 +8,7 @@ dcurr = 0
 count = 0
 f = False
 dicv = defaultdict(list)
+
 while n:
     a, b, c = map(int, input().split())
     pairs = {(a,b):c, (b,c):a, (a,c):b}
@@ -20,41 +21,41 @@ while n:
         
     pair = tuple(box)
 
-
-    #print(pairs)
-    for pair in pairs:
-        if dicv.get(pair) and len(dicv[pair]) == 1:
-                newbox = list(pair)
-                nedge = dicv[pair][0] + pairs[pair]
-                newbox.append(nedge)
-                dcurr = min(newbox)
-                if dcurr > dmax:
-                    count += 1
-                    dmax = dcurr
-                if pairs[pair] != dicv[pair]:   
-                    dicv[pair].append(pairs[pair])
-        elif dicv.get(pair) and len(dicv[pair]) > 1:
-            for i in range(len(dicv[pair])):
-                newbox = list(pair)
-                nedge = dicv[pair][i] + pairs[pair]
-                newbox.append(nedge)
-                dcurr = min(newbox)
-                # check this logic
-                if dcurr > dmax:
-                    f = True
-                if pairs[pair] != dicv[pair]:   
-                    dicv[pair].append(pairs[pair])
-            if f:
+    if dicv.get(pair) and len(dicv[pair]) == 1:
+            newbox = list(pair)
+            nedge = dicv[pair][0] + dtmp
+            newbox.append(nedge)
+            dcurr = min(newbox)
+            if dcurr > dmax:
                 count += 1
                 dmax = dcurr
-        else:
-            notpair += 1
-            dicv[pair].append(pairs[pair])
-    
-    if notpair == len(pairs):
-        if min(a,b,c) > dmax:
+            if dtmp != dicv[pair]:   
+                dicv[pair].append(dtmp)
+    elif dicv.get(pair) and len(dicv[pair]) > 1:
+        for i in range(len(dicv[pair])):
+            newbox = list(pair)
+            nedge = dicv[pair][i] + dtmp
+            newbox.append(nedge)
+            dcurr = min(newbox)
+            if dcurr > dmax:
+                f = True
+            if dtmp != dicv[pair]:   
+                dicv[pair].append(dtmp)
+        if f:
             count += 1
-            dmax = min(a,b,c)
+            dmax = dcurr
+            f = False
+    else:
+        if dtmp > dmax:
+            count += 1
+            dmax = dtmp
+
+        if len(pair) == 0:
+            dicv[(a,b)].append(c)
+        elif len(pair) == 1:
+            dicv[(dtmp,dtmp)].append(box[0])
+            dicv[(dtmp,box[0])].append(dtmp)
+            
     n-=1
 
 print(count)

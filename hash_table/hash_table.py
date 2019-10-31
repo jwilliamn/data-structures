@@ -16,7 +16,10 @@ def insert(hash_table, key, value):
         k, v = kv
         if key == k:
             if value > v:
-                bucket[i] == (key,value)
+                #print('bucket before', bucket)
+                #print('condition holds')
+                #print('dbucket after', bucket)
+                bucket[i] = (key,value)
         else:
             ne += 1
     if ne == len(bucket):
@@ -73,14 +76,6 @@ while n:
             f = False
             
         insert(hash_table, pair, dmin)
-
-        # else:
-        #     dcurr = dmin
-        #     if dcurr > dmax:
-        #         count += 1
-        #         dmax = dcurr
-            
-        #     insert(hash_table, pair, dmin)
 
     n-=1
 

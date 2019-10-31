@@ -59,7 +59,7 @@ while n:
             nbucket = len(bucket)
             while nbucket:
                 k, v = bucket[nbucket - 1]
-                if pair == k:
+                if pair == k or pair[::-1] == k:
                     dcurr = min(min(pair), v + dmin)
                     if dcurr > dmax:
                         f = True

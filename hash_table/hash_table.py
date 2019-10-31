@@ -1,61 +1,88 @@
-# Hash Table
+#!/usr/bin/env python
+# coding: utf-8
 
-from collections import defaultdict
+# Homework Assignment
+# Hash Table 
 
-n = int(input())
+def hashing_func(hash_table, key):
+    return hash(key)%len(hash_table)
+
+def insert(hash_table, key, value):
+    hash_key = hashing_func(hash_table, key)
+    bucket = hash_table[hash_key]
+    ne = 0
+
+    for i, kv in enumerate(bucket):
+        k, v = kv
+        if key == k:
+            if value > v:
+                bucket[i] == (key,value)
+        else:
+            ne += 1
+    if ne == len(bucket):
+        bucket.append((key,value))
+
+def search(hash_table, key):
+    hash_key = hashing_func(hash_table, key)
+    bucket = hash_table[hash_key]
+    return bucket
+
+
 dmax = 0
 dcurr = 0
 count = 0
 f = False
-dicv = defaultdict(list)
+
+n = int(input())
+# set hash table with a fix number
+hash_table = [[] for _ in range(n)]
 
 while n:
     a, b, c = map(int, input().split())
-    pairs = {(a,b):c, (b,c):a, (a,c):b}
-    notpair = 0
-
+    
     box = [a,b,c]
-    dtmp = min(box)
-    while dtmp in box:
-        box.remove(dtmp)
+    dmin = min(box)
+    box.remove(dmin)
         
     pair = tuple(box)
+    # First check the min 
+    # skip the box
+    if max(a,b,c) > dmax:
+        # update hash table with the max new min dimension
+        bucket = search(hash_table, pair)
 
-    if dicv.get(pair) and len(dicv[pair]) == 1:
-            newbox = list(pair)
-            nedge = dicv[pair][0] + dtmp
-            newbox.append(nedge)
-            dcurr = min(newbox)
-            if dcurr > dmax:
-                count += 1
-                dmax = dcurr
-            if dtmp != dicv[pair]:   
-                dicv[pair].append(dtmp)
-    elif dicv.get(pair) and len(dicv[pair]) > 1:
-        for i in range(len(dicv[pair])):
-            newbox = list(pair)
-            nedge = dicv[pair][i] + dtmp
-            newbox.append(nedge)
-            dcurr = min(newbox)
+        if bucket:
+            nbucket = len(bucket)
+            while nbucket:
+                k, v = bucket[nbucket - 1]
+                if pair == k:
+                    dcurr = min(min(pair), v + dmin)
+                    if dcurr > dmax:
+                        f = True
+                
+                nbucket -= 1
+            
+        if not f:
+            dcurr = dmin
             if dcurr > dmax:
                 f = True
-            if dtmp != dicv[pair]:   
-                dicv[pair].append(dtmp)
+
         if f:
             count += 1
             dmax = dcurr
             f = False
-    else:
-        if dtmp > dmax:
-            count += 1
-            dmax = dtmp
-
-        if len(pair) == 0:
-            dicv[(a,b)].append(c)
-        elif len(pair) == 1:
-            dicv[(dtmp,dtmp)].append(box[0])
-            dicv[(dtmp,box[0])].append(dtmp)
             
+        insert(hash_table, pair, dmin)
+
+        # else:
+        #     dcurr = dmin
+        #     if dcurr > dmax:
+        #         count += 1
+        #         dmax = dcurr
+            
+        #     insert(hash_table, pair, dmin)
+
     n-=1
 
+#print(hash_table)
 print(count)

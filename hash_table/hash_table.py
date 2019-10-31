@@ -4,31 +4,34 @@
 # Homework Assignment
 # Hash Table 
 
-def hashing_func(hash_table, key):
-    return hash(key)%len(hash_table)
+class MyHash():
+    def __init__(self, n):
+        self.hash_table = [[] for _ in range(n)]
 
-def insert(hash_table, key, value):
-    hash_key = hashing_func(hash_table, key)
-    bucket = hash_table[hash_key]
-    ne = 0
+    def hashing_func(self, hash_table, key):
+        hashsum = key[0]*(10**9) + key[1]
+        return hashsum%len(hash_table)
 
-    for i, kv in enumerate(bucket):
-        k, v = kv
-        if key == k:
-            if value > v:
-                #print('bucket before', bucket)
-                #print('condition holds')
-                #print('dbucket after', bucket)
-                bucket[i] = (key,value)
-        else:
-            ne += 1
-    if ne == len(bucket):
-        bucket.append((key,value))
+    def insert(self, hash_table, key, value):
+        hash_key = self.hashing_func(hash_table, key)
+        bucket = hash_table[hash_key]
+        ne = 0
 
-def search(hash_table, key):
-    hash_key = hashing_func(hash_table, key)
-    bucket = hash_table[hash_key]
-    return bucket
+        for i, kv in enumerate(bucket):
+            k, v = kv
+            if key == k:
+                if value > v:
+                    # update hash table with the max new min dimension
+                    bucket[i] = (key,value)
+            else:
+                ne += 1
+        if ne == len(bucket):
+            bucket.append((key,value))
+
+    def search(self, hash_table, key):
+        hash_key = self.hashing_func(hash_table, key)
+        bucket = hash_table[hash_key]
+        return bucket
 
 
 dmax = 0
@@ -37,8 +40,8 @@ count = 0
 f = False
 
 n = int(input())
-# set hash table with a fix number
-hash_table = [[] for _ in range(n)]
+myhash = MyHash(n)
+hash_table = myhash.hash_table
 
 while n:
     a, b, c = map(int, input().split())
@@ -48,11 +51,9 @@ while n:
     box.remove(dmin)
         
     pair = tuple(box)
-    # First check the min 
-    # skip the box
+    # First skip if max dim is less than the global max
     if max(a,b,c) > dmax:
-        # update hash table with the max new min dimension
-        bucket = search(hash_table, pair)
+        bucket = myhash.search(hash_table, pair)
 
         if bucket:
             nbucket = len(bucket)
@@ -75,7 +76,7 @@ while n:
             dmax = dcurr
             f = False
             
-        insert(hash_table, pair, dmin)
+        myhash.insert(hash_table, pair, dmin)
 
     n-=1
 

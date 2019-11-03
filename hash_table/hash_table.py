@@ -37,7 +37,7 @@ class MyHash():
 dmax = 0
 dcurr = 0
 count = 0
-f = False
+f = True
 
 n = int(input())
 myhash = MyHash(n)
@@ -47,37 +47,54 @@ while n:
     a, b, c = map(int, input().split())
     
     box = [a,b,c]
-    dmin = min(box)
-    box.remove(dmin)
-        
-    pair = tuple(box)
-    # First skip if max dim is less than the global max
-    if max(a,b,c) > dmax:
-        bucket = myhash.search(hash_table, pair)
 
-        if bucket:
+    nbox = sorted(box)
+    pair = tuple(nbox[1:])
+    dmin = nbox[0]
+
+    f = True
+    # First skip if max dim is less than the global max
+    if dmin > dmax:
+        #count += 1
+        dmax = dmin
+
+        bucket = myhash.search(hash_table, pair)
+        nbucket = len(bucket)
+        for i in range(nbucket):
+            k, v = bucket[i]
+            if pair == k or pair[::-1] == k:
+                dcurr = min(min(pair), v + dmin)
+                if dcurr > dmax:
+                    #print('yes')
+                    #count += 1
+                    dmax = dcurr
+        count += 1
+
+    else:
+        if min(pair) < dmax:
+            f = False
+        else:
+            nf = False
+            bucket = myhash.search(hash_table, pair)
             nbucket = len(bucket)
-            while nbucket:
-                k, v = bucket[nbucket - 1]
+            for i in range(nbucket):
+                k, v = bucket[i]
                 if pair == k or pair[::-1] == k:
                     dcurr = min(min(pair), v + dmin)
                     if dcurr > dmax:
-                        f = True
-                
-                nbucket -= 1
+                        #print('yes')
+                        #count += 1
+                        nf = True
+                        dmax = dcurr
             
-        if not f:
-            dcurr = dmin
-            if dcurr > dmax:
-                f = True
+            if nf:
+                count += 1
 
-        if f:
-            count += 1
-            dmax = dcurr
-            f = False
-            
+    if f:
         myhash.insert(hash_table, pair, dmin)
-
+    
+    #print('count',count)
+    #print(dmax)
     n-=1
 
 #print(hash_table)

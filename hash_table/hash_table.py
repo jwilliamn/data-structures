@@ -35,7 +35,6 @@ class MyHash():
 
 
 dmax = 0
-dcurr = 0
 count = 0
 f = True
 
@@ -52,49 +51,33 @@ while n:
     pair = tuple(nbox[1:])
     dmin = nbox[0]
 
-    f = True
     # First skip if max dim is less than the global max
-    if dmin > dmax:
-        #count += 1
-        dmax = dmin
+    if max(a,b,c) > dmax:
+
+        if dmin > dmax:
+            dmax = dmin
+            f = True
 
         bucket = myhash.search(hash_table, pair)
-        nbucket = len(bucket)
-        for i in range(nbucket):
-            k, v = bucket[i]
-            if pair == k or pair[::-1] == k:
-                dcurr = min(min(pair), v + dmin)
-                if dcurr > dmax:
-                    #print('yes')
-                    #count += 1
-                    dmax = dcurr
-        count += 1
-
-    else:
-        if min(pair) < dmax:
-            f = False
-        else:
-            nf = False
-            bucket = myhash.search(hash_table, pair)
+ 
+        if bucket:
             nbucket = len(bucket)
-            for i in range(nbucket):
-                k, v = bucket[i]
+            while nbucket:
+                k, v = bucket[nbucket - 1]
                 if pair == k or pair[::-1] == k:
                     dcurr = min(min(pair), v + dmin)
                     if dcurr > dmax:
-                        #print('yes')
-                        #count += 1
-                        nf = True
                         dmax = dcurr
+                        f = True
+                
+                nbucket -= 1
+ 
+        if f:
+            count += 1
+            f = False
             
-            if nf:
-                count += 1
-
-    if f:
         myhash.insert(hash_table, pair, dmin)
-    
-    #print('count',count)
-    #print(dmax)
+        
     n-=1
 
 #print(hash_table)

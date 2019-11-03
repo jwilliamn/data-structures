@@ -53,7 +53,7 @@ while n:
 
     # First skip if max dim is less than the global max
     if max(a,b,c) > dmax:
-
+        # check if incoming minimun is greater than the global min max
         if dmin > dmax:
             dmax = dmin
             f = True
@@ -77,7 +77,7 @@ while n:
             f = False
             
         myhash.insert(hash_table, pair, dmin)
-        
+
     n-=1
 
 #print(hash_table)

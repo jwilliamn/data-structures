@@ -11,83 +11,52 @@ def numLines(p, n):
         k = 1
     else: 
         k = numLines(p, p[n] - 1) + 1
-    #print('Line number ', k, ': From word no. ', 
-    #                             p[n], 'to ', n) 
     return k 
   
-def solveWordWrap (l, n, M): 
-      
-    # For simplicity, 1 extra space is 
-    # used in all below arrays  
-  
-    # extras[i][j] will have number  
-    # of extra spaces if words from i  
-    # to j are put in a single line 
-    extras = [[0 for i in range(n + 1)] 
+def justify (lwords, n, l): 
+    margin = [[0 for i in range(n + 1)] 
                  for i in range(n + 1)] 
                    
-    # lc[i][j] will have cost of a line  
-    # which has words from i to j 
-    lc = [[0 for i in range(n + 1)] 
+    margincost = [[0 for i in range(n + 1)] 
              for i in range(n + 1)] 
-               
-    # c[i] will have total cost of  
-    # optimal arrangement of words  
-    # from 1 to i 
+
+    # Optimum cost 
     c = [0 for i in range(n + 1)] 
-      
-    # p[] is used to print the solution. 
+    
+    # Indexes of words
     p = [0 for i in range(n + 1)] 
       
-    # calculate extra spaces in a single 
-    # line. The value extra[i][j] indicates 
-    # extra spaces if words from word number 
-    # i to j are placed in a single line  
     for i in range(n + 1):
-        extras[i][i] = M - l[i - 1] 
+        margin[i][i] = l - lwords[i - 1] 
         for j in range(i + 1, n + 1): 
-            extras[i][j] = (extras[i][j - 1] - 
-                                    l[j - 1] - 1) 
-                                      
-    # Calculate line cost corresponding  
-    # to the above calculated extra  
-    # spaces. The value lc[i][j] indicates  
-    # cost of putting words from word number 
-    # i to j in a single line  
+            margin[i][j] = (margin[i][j - 1] - 
+                                    lwords[j - 1] - 1) 
+    # Cost computation                          
     for i in range(n + 1): 
         for j in range(i, n + 1): 
-            if extras[i][j] < 0: 
-                lc[i][j] = INF; 
-            #elif j == n and extras[i][j] >= 0: 
-            #    lc[i][j] = 0
+            if margin[i][j] < 0: 
+                margincost[i][j] = INF; 
             else: 
-                lc[i][j] = (extras[i][j] ** 
+                margincost[i][j] = (margin[i][j] ** 
                             2) 
   
-    # Calculate minimum cost and find  
-    # minimum cost arrangement. The value 
-    # c[j] indicates optimized cost to  
-    # arrange words from word number 1 to j. 
+    # Compute minimum cost and find words in each line
     c[0] = 0
     for j in range(1, n + 1): 
         c[j] = INF 
         for i in range(1, j + 1): 
             if (c[i - 1] != INF and 
-                lc[i][j] != INF and 
-                ((c[i - 1] + lc[i][j]) < c[j])): 
-                c[j] = c[i-1] + lc[i][j] 
+                margincost[i][j] != INF and 
+                ((c[i - 1] + margincost[i][j]) < c[j])): 
+                c[j] = c[i-1] + margincost[i][j] 
                 p[j] = i 
     return c, p
-    #printSolution(p, n) 
 
-
-# Driver Code 
 
 n, l = map(int, input().split())
+lwords = [len(x) for x in input().split()]
 
-words = [len(x) for x in input().split()]
-
-c, p = solveWordWrap(words, n, l) 
-k = printSolution(p, n)
+c, p = justify(lwords, n, l) 
+k = numLines(p, n)
 
 print(c[-1], k)

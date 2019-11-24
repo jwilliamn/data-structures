@@ -4,59 +4,43 @@
 # Homework Assignment
 # Dynamic programming 
 
-INF = 2147483647
-def numLines(p, n): 
-    k = 0
-    if p[n] == 1: 
-        k = 1
-    else: 
-        k = numLines(p, p[n] - 1) + 1
-    return k 
-  
-def justify (lwords, n, l): 
-    margin = [[0 for i in range(n + 1)] 
-                 for i in range(n + 1)] 
-                   
-    margincost = [[0 for i in range(n + 1)] 
-             for i in range(n + 1)] 
+class DP():
+    def __init__(self, n, l):
+        self.n = n 
+        self.l = l
+        self.INF = 2147483647
+        self.margin = [0]*(n+1)
+        self.mincost = 0
+        self.result = [0]*(n+1)
 
-    # Optimum cost 
-    c = [0 for i in range(n + 1)] 
-    
-    # Indexes of words
-    p = [0 for i in range(n + 1)] 
-      
-    for i in range(n + 1):
-        margin[i][i] = l - lwords[i - 1] 
-        for j in range(i + 1, n + 1): 
-            margin[i][j] = (margin[i][j - 1] - 
-                                    lwords[j - 1] - 1) 
-    # Cost computation                          
-    for i in range(n + 1): 
-        for j in range(i, n + 1): 
-            if margin[i][j] < 0: 
-                margincost[i][j] = INF; 
-            else: 
-                margincost[i][j] = (margin[i][j] ** 
-                            2) 
-  
-    # Compute minimum cost and find words in each line
-    c[0] = 0
-    for j in range(1, n + 1): 
-        c[j] = INF 
-        for i in range(1, j + 1): 
-            if (c[i - 1] != INF and 
-                margincost[i][j] != INF and 
-                ((c[i - 1] + margincost[i][j]) < c[j])): 
-                c[j] = c[i-1] + margincost[i][j] 
-                p[j] = i 
-    return c, p
+    def justify(self, lwords):
+        costM = [self.INF]*(n+1)
+        costM[0] = 0            
+
+        # Min cost of margin
+        for i in range(1, self.n + 1):
+            #costM.append(costM[i -1] + len(words[i-1]))
+            self.margin[i] = self.margin[i -1] + lwords[i-1]
+            for j in range(i, 0, -1):
+                words_length = (self.margin[i] - self.margin[j-1] + i - j)
+                if words_length > self.l:
+                    break 
+                else:
+                    self.mincost = (self.l - words_length)**2
+                    new_costM = costM[j-1] + self.mincost
+                    if new_costM < costM[i]:
+                        costM[i] = new_costM
+                        self.result[i] = self.result[j -1] + 1
+                    
+        
+        return costM, self.result
 
 
 n, l = map(int, input().split())
 lwords = [len(x) for x in input().split()]
 
-c, p = justify(lwords, n, l) 
-k = numLines(p, n)
+dp = DP(n,l)
+minc, res = dp.justify(lwords)
 
-print(c[-1], k)
+#print(minc, res)
+print(minc[-1], res[-1])

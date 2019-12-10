@@ -19,21 +19,38 @@ class LocalAlign():
 
     def align(self, p, s):
         score = [0]*(self.m+1)
-        patt = [0]*(self.m+1)
+        dprev = 0
+        iprev = 0
+        jprev = 0
+        #patt = [0]*(self.m+1)
 
         # Compute score alignment for all position of sequence
         for j in range(1, self.n + 1):
-            score[0] = 0
+            #score[0] = 0
+            dprev = 0
             for i in range(1, self.m + 1):
                 # print('s and p', s[j-1], p[i -1])
                 # print('patt:', patt)
                 # print('i-1, j-1:', patt[i-1] + (self.match if s[j-1] == p[i-1] else self.mismatch))
                 # print('i, j-1:', patt[i] + self.indel)
                 # print('i-1, j:', score[i - 1] + self.indel)
+                iprev = score[i-1]
+                jprev = score[i]
 
-                score[i] = max(patt[i-1] + (self.match if s[j-1] == p[i-1] else self.mismatch),
-                            patt[i] + self.indel,
-                            score[i - 1] + self.indel)
+                # print('dprev', dprev)
+                # print('iprev', iprev)
+                # print('jprev', jprev)
+
+                currd = max(dprev + (self.match if s[j-1] == p[i-1] else self.mismatch),
+                            jprev + self.indel,
+                            iprev + self.indel)
+
+                # score[i] = max(patt[i-1] + (self.match if s[j-1] == p[i-1] else self.mismatch),
+                #             patt[i] + self.indel,
+                #             score[i - 1] + self.indel)
+
+                dprev = score[i]
+                score[i] = currd
                 
 
                 #print('score', i, ':', score[i])
@@ -44,7 +61,7 @@ class LocalAlign():
                         self.result.append((j,score[i]))
             
                     #print('prev score',patt)
-                    patt = score.copy()
+                    #patt = score.copy()
                     
         
         return self.result

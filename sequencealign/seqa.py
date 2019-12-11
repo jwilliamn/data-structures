@@ -3,6 +3,7 @@
 
 # Homework Assignment
 # DP - Local sequence alignment 
+import sys
 
 class LocalAlign():
     def __init__(self, match, mismatch, indel, th, m, n):
@@ -15,67 +16,53 @@ class LocalAlign():
         self.n = n
         #self.sequence = [0]*(self.n+1)
 
-        self.result = []
+        #self.result = []
 
-    def align(self, p, s):
+    def align(self, p):
         score = [0]*(self.m+1)
-        dprev = 0
-        iprev = 0
-        jprev = 0
-        #patt = [0]*(self.m+1)
+        dprev = 0 # s(i-1, j-1)
+        iprev = 0 # s(i-1, j)
+        jprev = 0 # s(i, j-1)
 
         # Compute score alignment for all position of sequence
         for j in range(1, self.n + 1):
-            #score[0] = 0
+            s = sys.stdin.read(1)
             dprev = 0
             for i in range(1, self.m + 1):
-                # print('s and p', s[j-1], p[i -1])
-                # print('patt:', patt)
-                # print('i-1, j-1:', patt[i-1] + (self.match if s[j-1] == p[i-1] else self.mismatch))
-                # print('i, j-1:', patt[i] + self.indel)
-                # print('i-1, j:', score[i - 1] + self.indel)
+                #print('s_char', s)
                 iprev = score[i-1]
                 jprev = score[i]
 
-                # print('dprev', dprev)
-                # print('iprev', iprev)
-                # print('jprev', jprev)
-
-                currd = max(dprev + (self.match if s[j-1] == p[i-1] else self.mismatch),
+                currd = max(dprev + (self.match if s == p[i-1] else self.mismatch),
                             jprev + self.indel,
                             iprev + self.indel)
-
-                # score[i] = max(patt[i-1] + (self.match if s[j-1] == p[i-1] else self.mismatch),
-                #             patt[i] + self.indel,
-                #             score[i - 1] + self.indel)
 
                 dprev = score[i]
                 score[i] = currd
                 
-
-                #print('score', i, ':', score[i])
+                #print('score:', score[i])
                 if i == self.m:
                     #print('last:',i)
                     if score[i] >= self.th:
-                        #self.result[j] = score[i]
-                        self.result.append((j,score[i]))
-            
-                    #print('prev score',patt)
-                    #patt = score.copy()
+                        print(j, score[i])
+                        #self.result.append((j,score[i]))
                     
         
-        return self.result
+        #return self.result
 
 
 ma, mi, d, th = map(int, input().split())
 m, n = map(int, input().split())
-p = [char for char in input()]
-s = [char for char in input()]
-
-
+# p = [char for char in input()]
+# s = [char for char in input()]
+p = input()
 approxMatching = LocalAlign(ma, mi, d, th, m, n)
-res = approxMatching.align(p, s)
+approxMatching.align(p)
+
+#s = input()
+
+#approxMatching.align(p, s)
 
 #print(res)
-for l in res:
-    print(l[0], l[1])
+# for l in res:
+#     print(l[0], l[1])
